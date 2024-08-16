@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Post = require('../models/Post');
 
 // Create a new user
 router.post('/users', async (req, res) => {
@@ -10,10 +11,34 @@ router.post('/users', async (req, res) => {
     await user.save();
     res.status(201).send(user);
   } catch (err) {
-    res.status(400).send(err);
+    res.status(400).send({ error: err.message });
   }
 });
 
-// Other routes like GET, PUT, DELETE...
+// Update a post
+router.put('/posts/:id', async (req, res) => {
+  try {
+    const post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!post) {
+      return res.status(404).send();
+    }
+    res.status(200).send(post);
+  } catch (err) {
+    res.status(400).send({ error: err.message });
+  }
+});
+
+// Delete a post
+router.delete('/posts/:id', async (req, res) => {
+  try {
+    const post = await Post.findByIdAndDelete(req.params.id);
+    if (!post) {
+      return res.status(404).send();
+    }
+    res.status(200).send(post);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
 
 module.exports = router;
