@@ -1,62 +1,61 @@
-// routes/users.js
+// routes/thoughts.js
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
-const Thought = require('../models/Thought'); // Updated
+const Thought = require('../models/Thought');
 
-//Get users
-router.get('/users', async (req, res) => {
+// Get all thoughts
+router.get('/thoughts', async (req, res) => {
   try {
-    const users = await User.find({});
-    res.status(200).send(users);
+    const thoughts = await Thought.find({});
+    res.status(200).send(thoughts);
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
 });
 
-// Create a new user
-router.post('/users', async (req, res) => {
+// Create a new thought
+router.post('/thoughts', async (req, res) => {
   try {
-    const user = new User(req.body);
-    await user.save();
-    res.status(201).send(user);
+    const thought = new Thought(req.body);
+    await thought.save();
+    res.status(201).send(thought);
   } catch (err) {
     res.status(400).send({ error: err.message });
   }
 });
 
-// Add a friend
-router.post('/users/:userId/friends/:friendId', async (req, res) => {
+// Add a reaction to a thought
+router.post('/thoughts/:thoughtId/reactions', async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
-    if (!user) {
+    const thought = await Thought.findById(req.params.thoughtId);
+    if (!thought) {
       return res.status(404).send();
     }
-    user.friends.push(req.params.friendId);
-    await user.save();
-    res.status(200).send(user);
+    thought.reactions.push(req.body);
+    await thought.save();
+    res.status(200).send(thought);
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
 });
 
-// Remove a friend
-router.delete('/users/:userId/friends/:friendId', async (req, res) => {
+// Remove a reaction from a thought
+router.delete('/thoughts/:thoughtId/reactions/:reactionId', async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
-    if (!user) {
+    const thought = await Thought.findById(req.params.thoughtId);
+    if (!thought) {
       return res.status(404).send();
     }
-    user.friends.pull(req.params.friendId);
-    await user.save();
-    res.status(200).send(user);
+    thought.reactions.id(req.params.reactionId).remove();
+    await thought.save();
+    res.status(200).send(thought);
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
 });
 
 // Update a thought
-router.put('/thoughts/:id', async (req, res) => { // Updated
+router.put('/thoughts/:id', async (req, res) => {
   try {
     const thought = await Thought.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!thought) {
@@ -69,7 +68,7 @@ router.put('/thoughts/:id', async (req, res) => { // Updated
 });
 
 // Delete a thought
-router.delete('/thoughts/:id', async (req, res) => { // Updated
+router.delete('/thoughts/:id', async (req, res) => {
   try {
     const thought = await Thought.findByIdAndDelete(req.params.id);
     if (!thought) {
