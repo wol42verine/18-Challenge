@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Thought = require('../models/Thought'); // Updated
+const mongoose = require('mongoose'); // Add this line
 
 //Get users
 router.get('/users', async (req, res) => {
@@ -32,6 +33,7 @@ router.post('/users/:userId/friends/:friendId', async (req, res) => {
     if (!user) {
       return res.status(404).send();
     }
+    const friendId = new mongoose.Types.ObjectId(req.params.friendId);
     user.friends.push(req.params.friendId);
     await user.save();
     res.status(200).send(user);
