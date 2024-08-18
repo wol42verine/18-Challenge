@@ -2,7 +2,9 @@
 
 This is a social network API built with Node.js, Express, and MongoDB. It allows users to create and manage thoughts, reactions, and friendships.
 
-![App Demo](https://your-image-hosting-service.com/path-to-your-gif.gif)
+## Demo
+
+Watch the demo video [here](https://github.com/wol42verine/18-Challenge/releases/tag/Demo)
 
 ## Table of Contents
 
